@@ -12,6 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Run unit tests
+      - name: Docker build
         shell: bash
-        run: dotnet test
+        run: docker build .
