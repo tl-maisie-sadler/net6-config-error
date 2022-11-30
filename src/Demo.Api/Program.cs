@@ -1,30 +1,18 @@
-using Microsoft.AspNetCore;
+var builder = WebApplication.CreateBuilder(args);
 
-public class Program
+builder.Services.AddSingleton(new Options(builder.Configuration["AppSettings:Options"]));
+
+var app = builder.Build();
+
+app.MapGet("/", (Options options) => options.Value);
+
+app.MapGet("/svc", (IConfiguration configuration) => configuration["AppSettings:Options"]);
+
+app.Run();
+
+public partial class Program
 {
-    public static void Main(string[] args)
-    {
-        CreateWebHostBuilder(args).Build().Run();
-    }
-
-    private static IWebHostBuilder CreateWebHostBuilder(string[] args)
-    {
-        return WebHost.CreateDefaultBuilder(args)
-            .ConfigureServices((ctx, services) =>
-            {
-                services.AddSingleton<Options>(new Options(ctx.Configuration["AppSettings:Options"]));
-            })
-            .Configure(appBuilder =>
-            {
-                appBuilder.UseRouting();
-                appBuilder.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapGet("/", (Options options) => options.Value);
-
-                    endpoints.MapGet("/svc", (IConfiguration configuration) => configuration["AppSettings:Options"]);
-                });
-            });
-    }
+    // Expose the Program class for use with WebApplicationFactory<T>
 }
 
 record Options(string Value);
