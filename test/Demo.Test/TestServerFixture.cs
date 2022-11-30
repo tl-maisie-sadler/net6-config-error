@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -7,6 +8,8 @@ namespace Demo.Test;
 
 public class TestServerFixture : WebApplicationFactory<Program>
 {
+    internal Dictionary<string, string> OverrideConfiguration = new();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         base.ConfigureWebHost(builder);
@@ -20,6 +23,7 @@ public class TestServerFixture : WebApplicationFactory<Program>
 
                 builder.Sources.Clear();
                 builder.AddJsonFile(configLocation);
+                builder.AddInMemoryCollection(OverrideConfiguration);
             });
     }
 }
