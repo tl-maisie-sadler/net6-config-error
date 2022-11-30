@@ -1,5 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddTestConfiguration();
+
 builder.Services.AddSingleton(new Options(builder.Configuration["AppSettings:Options"]));
 
 var app = builder.Build();

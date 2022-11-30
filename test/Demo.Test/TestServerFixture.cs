@@ -10,20 +10,19 @@ public class TestServerFixture : WebApplicationFactory<Program>
 {
     internal Dictionary<string, string> OverrideConfiguration = new();
 
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    protected override IWebHostBuilder? CreateWebHostBuilder()
     {
-        base.ConfigureWebHost(builder);
+        MinimalApiTestConfiguration.Configure(builder =>
+        {
+            System.Console.WriteLine("configure test");
+            var testDir = Path.GetDirectoryName(GetType().Assembly.Location);
+            var configLocation = Path.Combine(testDir!, "testsettings.json");
 
-        builder
-            .ConfigureAppConfiguration((ctx, builder) =>
-            {
-                System.Console.WriteLine("configure test");
-                var testDir = Path.GetDirectoryName(GetType().Assembly.Location);
-                var configLocation = Path.Combine(testDir!, "testsettings.json");
+            builder.Sources.Clear();
+            builder.AddJsonFile(configLocation);
+            builder.AddInMemoryCollection(OverrideConfiguration);
+        });
 
-                builder.Sources.Clear();
-                builder.AddJsonFile(configLocation);
-                builder.AddInMemoryCollection(OverrideConfiguration);
-            });
+        return base.CreateWebHostBuilder();
     }
 }
