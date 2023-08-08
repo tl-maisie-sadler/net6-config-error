@@ -12,18 +12,21 @@ public class TestServerFixture : WebApplicationFactory<Program>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        foreach (var setting in OverrideConfiguration)
+        {
+            builder.UseSetting(setting.Key, setting.Value);
+        }
+
         base.ConfigureWebHost(builder);
 
         builder
             .ConfigureAppConfiguration((ctx, builder) =>
             {
-                System.Console.WriteLine("configure test");
                 var testDir = Path.GetDirectoryName(GetType().Assembly.Location);
                 var configLocation = Path.Combine(testDir!, "testsettings.json");
 
                 builder.Sources.Clear();
                 builder.AddJsonFile(configLocation);
-                builder.AddInMemoryCollection(OverrideConfiguration);
             });
     }
 }
